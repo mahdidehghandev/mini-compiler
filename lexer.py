@@ -8,6 +8,9 @@ class Token:
     def __str__(self):
         return f'Token({self.type}, {repr(self.value)})'
 
+    def __repr__(self):
+        return self.__str__()
+
 
 class Lexer:
     def __init__(self, text):
@@ -36,6 +39,8 @@ class Lexer:
 
             if char == '/' and self.forward + 1 < len(self.text) and self.text[self.forward + 1] == '/':
                 self.is_single_line_comment()
+            elif char == '{':
+                self.is_multi_line_comment()
             elif char in self.operators:
                 self.is_operator()
             elif char.isdigit():  

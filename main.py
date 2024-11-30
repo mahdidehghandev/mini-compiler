@@ -1,5 +1,5 @@
 from lexer import Lexer
-
+from parser import Parser
 
 def read_file(entry):
 
@@ -21,8 +21,9 @@ def main(file_name):
     lexer = Lexer(text)
     try:
         tokens = lexer.tokenize()
-        for token in lexer.tokens:
-            print(token)
+        parser = Parser(tokens)
+        parser.parse()
+        print(parser.postfix)
     except Exception as e:
         print(f"An error occurred: {e}")
 
