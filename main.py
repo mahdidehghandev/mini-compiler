@@ -68,7 +68,43 @@ def main(file_name):
             plt.show()
 
         elif choice == "3":
-            pass
+            start_of_the_interval = float(input("Enter start of the interval: "))
+            end_of_the_interval = float(input("Enter end of the interval: "))
+            accuracy = float(input("Enter desired accuracy: "))
+            max_iterations = 1000
+
+            evaluate = Evaluate(parser.postfix, tokens)
+            y1 = evaluate.evaluate_with_value(start_of_the_interval)
+            evaluate = Evaluate(parser.postfix, tokens)
+            y2 = evaluate.evaluate_with_value(end_of_the_interval)
+
+            if y1 * y2 > 0:
+                print("No root found in the given interval.")
+            else:
+                iteration = 0
+                while abs(end_of_the_interval - start_of_the_interval) > accuracy and iteration < max_iterations:
+                    mid_point = (start_of_the_interval + end_of_the_interval) / 2
+                    evaluate = Evaluate(parser.postfix, tokens)
+                    y_mid = evaluate.evaluate_with_value(mid_point)
+
+                    if abs(y_mid) < accuracy:
+                        print(f"Root found at x = {mid_point} with y ≈ {y_mid}")
+                        break
+
+                    if y1 * y_mid < 0:
+                        end_of_the_interval = mid_point
+                        y2 = y_mid
+                    else:
+                        start_of_the_interval = mid_point
+                        y1 = y_mid
+
+                    iteration += 1
+
+                if iteration >= max_iterations:
+                    print("Maximum iterations reached. Approximation may not be accurate.")
+                else:
+                    print(f"Root approximated at x = {(start_of_the_interval + end_of_the_interval) / 2}")
+
         elif choice == "4":
             break
 
