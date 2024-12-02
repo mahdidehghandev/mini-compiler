@@ -1,12 +1,13 @@
 
 
 class Token:
-    def __init__(self, type, value):
+    def __init__(self, type, value, line):
         self.type = type
         self.value = value
+        self.line = line
 
     def __str__(self):
-        return f'Token({self.type}, {repr(self.value)})'
+        return f'Token({self.type}, {repr(self.value)}, Line: {self.line})'
 
     def __repr__(self):
         return self.__str__()
@@ -23,12 +24,12 @@ class Lexer:
         
 
     def error(self):
-        raise Exception(f"ERROR at line {self.line}, position {self.forward}: {self.text[self.forward]}")
+        raise Exception(f"Lexical error at Line {self.line}: Unexpected character '{self.text[self.forward]}'")
 
 
     def create_token(self, type):
         lexeme = self.text[self.beginning:self.forward]
-        token = Token(type=type, value=lexeme)
+        token = Token(type=type, value=lexeme, line=self.line)
         self.tokens.append(token)
         return token
         
@@ -52,7 +53,7 @@ class Lexer:
             else:  
                 self.error()
 
-        token = Token(type="EOF", value=None)
+        token = Token(type="EOF", value=None, line=self.line)
         self.tokens.append(token)
         return self.tokens
 
@@ -165,9 +166,8 @@ class Lexer:
 
 
                 case -1:
-                    raise Exception(
-                        f"Invalid number format starting at position {self.beginning}"
-                    )
+                    raise Exception(f"Invalid number format at Line {self.line}")
+
                     
         if state in {1, 3, 6}:  
             self.create_token("NUM")
