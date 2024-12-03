@@ -1,5 +1,3 @@
-
-
 class Token:
     def __init__(self, type, value, line):
         self.type = type
@@ -64,7 +62,7 @@ class Lexer:
         while self.forward < len(self.text) and self.text[self.forward] != '\n':
             self.forward += 1
         self.beginning = self.forward  
-
+    
 
     def is_multi_line_comment(self):
         self.forward += 1
@@ -206,4 +204,7 @@ class Lexer:
                 return
         self.error()
 
+            
+            
+            
             

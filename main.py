@@ -40,7 +40,7 @@ def main(file_name):
         choice = input("--> ")
 
         if choice == "1":
-            evaluate = Evaluate(parser.postfix, tokens)
+            evaluate = Evaluate(parser.postfix)
             evaluate.evaluate()
 
         elif choice == "2":
@@ -50,7 +50,7 @@ def main(file_name):
             points = []
 
             for i in np.arange(start_of_the_interval, end_of_the_interval, step):
-                evaluate = Evaluate(parser.postfix, tokens)
+                evaluate = Evaluate(parser.postfix)
                 y = evaluate.evaluate_with_value(i)
                 points.append((i, y))
 
@@ -73,9 +73,9 @@ def main(file_name):
             accuracy = float(input("Enter desired accuracy: "))
             max_iterations = 1000
 
-            evaluate = Evaluate(parser.postfix, tokens)
+            evaluate = Evaluate(parser.postfix)
             y1 = evaluate.evaluate_with_value(start_of_the_interval)
-            evaluate = Evaluate(parser.postfix, tokens)
+            evaluate = Evaluate(parser.postfix)
             y2 = evaluate.evaluate_with_value(end_of_the_interval)
 
             if y1 * y2 > 0:
@@ -84,7 +84,7 @@ def main(file_name):
                 iteration = 0
                 while abs(end_of_the_interval - start_of_the_interval) > accuracy and iteration < max_iterations:
                     mid_point = (start_of_the_interval + end_of_the_interval) / 2
-                    evaluate = Evaluate(parser.postfix, tokens)
+                    evaluate = Evaluate(parser.postfix)
                     y_mid = evaluate.evaluate_with_value(mid_point)
 
                     if abs(y_mid) < accuracy:

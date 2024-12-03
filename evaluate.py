@@ -3,12 +3,12 @@ import math
 
 class Evaluate:
 
-    def __init__(self, postfix_expr, tokens):
+    def __init__(self, postfix_expr):
         self.postfix_expr = postfix_expr
         self.identifier_vals = {}
 
-    def get_values(self):
 
+    def get_values(self):
         for token in self.postfix_expr:
             if token.type == "ID" and token.value not in ['div', 'mod', 'sin', 'cos', 'tan', 'cot', 'arcsin', 'arccos', 'arctan', 'arccot', 'log', 'sqrt', 'sqr', 'exp']:
                 token_lower = token.value.lower()
@@ -22,8 +22,8 @@ class Evaluate:
                     result = self.convert_to_num(value)
                     self.identifier_vals[token_lower] = result
 
-    def put_values(self, value):
 
+    def put_values(self, value):
         for token in self.postfix_expr:
             if token.type == "ID" and token.value not in ['div', 'mod', 'sin', 'cos', 'tan', 'cot', 'arcsin', 'arccos', 'arctan', 'arccot', 'log', 'sqrt', 'sqr', 'exp']:
                 token_lower = token.value.lower()
@@ -36,47 +36,50 @@ class Evaluate:
                     result = self.convert_to_num(value)
                     self.identifier_vals[token_lower] = result
 
+
     def is_number(self, entry):
         entry = self.convert_to_num(entry)
         if isinstance(entry, int):
             return True
+        
         elif isinstance(entry, float):
             return True
+        
         else:
             return False
 
+
     def convert_to_num(self, entry):
-        print(entry)
         try:
-
             num = float(entry)
-
             return int(num) if num.is_integer() else num
         except ValueError:
             raise Exception("ERROR: Invalid number format")
 
-    def is_single_input_op(self, element):
+
+    def is_single_op(self, element):
         ops = ['sin', 'cos', 'tan', 'cot', 'arcsin', 'arccos',
                'arctan', 'arccot', 'log', 'sqrt', 'sqr', 'exp', 'unary-']
         return element in ops
 
-    def is_double_input_op(self, element):
+
+    def is_binary_op(self, element):
         ops = ['+', '-', 'mod', 'div', '*', '/', '^']
         return element in ops
 
+
     def evaluate(self):
         self.get_values()
-        print(self.identifier_vals)
         operand_stack = []
 
         for element in self.postfix_expr:
-            print(f"\nProcessing element: {element.value}")
-            print(f"Stack before operation: {operand_stack}")
+
 
             if element.type == "ID" and element.value not in ['div', 'mod', 'sin', 'cos', 'tan', 'cot', 'arcsin', 'arccos', 'arctan', 'arccot', 'log', 'sqrt', 'sqr', 'exp']:
                 number = self.identifier_vals[f'{element.value.lower()}']
                 operand_stack.append(number)
-            elif self.is_double_input_op(element.value):
+                
+            elif self.is_binary_op(element.value):
                 if len(operand_stack) < 2:
                     raise Exception(
                         f"len of the stack is less than required for a double-input operation: {operand_stack}")
@@ -104,7 +107,7 @@ class Evaluate:
                 elif element.value == 'div':
                     operand_stack.append(bottom_element // top_element)
 
-            elif self.is_single_input_op(element.value):
+            elif self.is_single_op(element.value):
                 if len(operand_stack) < 1:
                     raise Exception(
                         f"len of the stack is less than required for a single-input operation: {operand_stack}")
@@ -148,13 +151,14 @@ class Evaluate:
 
                 elif element.value == 'exp':
                     operand_stack.append(math.exp(top_element))
+                    
             elif self.is_number(element.value):
                 number = self.convert_to_num(element.value)
                 operand_stack.append(number)
+                
             else:
                 raise Exception(f"Invalid element: {element.value}")
 
-            print(f"Stack after operation: {operand_stack}")
 
         if len(operand_stack) != 1:
             raise Exception(
@@ -162,9 +166,9 @@ class Evaluate:
 
         return operand_stack.pop()
 
+
     def evaluate_with_value(self,value):
         self.put_values(value)
-        print(self.identifier_vals)
         operand_stack = []
 
         for element in self.postfix_expr:
@@ -172,7 +176,8 @@ class Evaluate:
             if element.type == "ID" and element.value not in ['div', 'mod', 'sin', 'cos', 'tan', 'cot', 'arcsin', 'arccos', 'arctan', 'arccot', 'log', 'sqrt', 'sqr', 'exp']:
                 number = self.identifier_vals[f'{element.value.lower()}']
                 operand_stack.append(number)
-            elif self.is_double_input_op(element.value):
+                
+            elif self.is_binary_op(element.value):
                 if len(operand_stack) < 2:
                     raise Exception(
                         f"len of the stack is less than required for a double-input operation: {operand_stack}")
@@ -200,7 +205,7 @@ class Evaluate:
                 elif element.value == 'div':
                     operand_stack.append(bottom_element // top_element)
 
-            elif self.is_single_input_op(element.value):
+            elif self.is_single_op(element.value):
                 if len(operand_stack) < 1:
                     raise Exception(
                         f"len of the stack is less than required for a single-input operation: {operand_stack}")
@@ -244,9 +249,11 @@ class Evaluate:
 
                 elif element.value == 'exp':
                     operand_stack.append(math.exp(top_element))
+                    
             elif self.is_number(element.value):
                 number = self.convert_to_num(element.value)
                 operand_stack.append(number)
+                
             else:
                 raise Exception(f"Invalid element: {element.value}")
 
