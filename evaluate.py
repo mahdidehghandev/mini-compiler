@@ -7,10 +7,97 @@ class Evaluate:
         self.postfix_expr = postfix_expr
         self.identifier_vals = {}
 
+    @staticmethod
+    def _reserved_ids():
+        return ['div', 'mod', 'sin', 'cos', 'tan', 'cot', 'arcsin', 'arccos',
+                'arctan', 'arccot', 'log', 'sqrt', 'sqr', 'exp']
+    
 
+    @staticmethod
+    def convert_to_num(entry):
+        try:
+            num = float(entry)
+            return int(num) if num.is_integer() else num
+        except ValueError:
+            raise Exception("ERROR: Invalid number format")
+
+    @staticmethod
+    def is_single_op(element):
+        ops = ['sin', 'cos', 'tan', 'cot', 'arcsin', 'arccos',
+               'arctan', 'arccot', 'log', 'sqrt', 'sqr', 'exp', 'unary-']
+        return element in ops
+
+    @staticmethod
+    def is_binary_op(element):
+        ops = ['+', '-', 'mod', 'div', '*', '/', '^']
+        return element in ops
+
+
+    @staticmethod
+    def _apply_binary_op(op, a, b):
+
+        if op == '+':
+            return a + b
+        elif op == '-':
+            return a - b
+        elif op == '*':
+            return a * b
+        elif op == '/':
+            return a / b
+        elif op == '^':
+            return a ** b
+        elif op == 'mod':
+            return a % b
+        elif op == 'div':
+            return a // b
+        else:
+            raise Exception(f"Unknown binary operator: {op}")
+        
+        
+    
+    @staticmethod
+    def _apply_single_op(op, a):
+        if op == 'unary-':
+            return -a
+        elif op == 'sin':
+            return math.sin(a)
+        elif op == 'cos':
+            return math.cos(a)
+        elif op == 'tan':
+            return math.tan(a)
+        elif op == 'cot':
+            return 1 / math.tan(a)
+        elif op == 'arcsin':
+            if -1 <= a <= 1:
+                return math.asin(a)
+            raise Exception("arcsin domain error")
+        elif op == 'arccos':
+            if -1 <= a <= 1:
+                return math.acos(a)
+            raise Exception("arccos domain error")
+        elif op == 'arctan':
+            return math.atan(a)
+        elif op == 'arccot':
+            return 1 / math.atan(a)
+        elif op == 'log':
+            if a > 0:
+                return math.log(a)
+            raise Exception("log domain error")
+        elif op == 'sqrt':
+            if a >= 0:
+                return math.sqrt(a)
+            raise Exception("sqrt domain error")
+        elif op == 'sqr':
+            return a ** 2
+        elif op == 'exp':
+            return math.exp(a)
+        else:
+            raise Exception(f"Unknown unary operator: {op}")
+        
+        
     def get_values(self):
         for token in self.postfix_expr:
-            if token.type == "ID" and token.value not in ['div', 'mod', 'sin', 'cos', 'tan', 'cot', 'arcsin', 'arccos', 'arctan', 'arccot', 'log', 'sqrt', 'sqr', 'exp']:
+            if token.type == "ID" and token.value not in self._reserved_ids():
                 token_lower = token.value.lower()
 
                 if token_lower not in self.identifier_vals and token_lower != 'e':
@@ -25,7 +112,7 @@ class Evaluate:
 
     def put_values(self, value):
         for token in self.postfix_expr:
-            if token.type == "ID" and token.value not in ['div', 'mod', 'sin', 'cos', 'tan', 'cot', 'arcsin', 'arccos', 'arctan', 'arccot', 'log', 'sqrt', 'sqr', 'exp']:
+            if token.type == "ID" and token.value not in self._reserved_ids():
                 token_lower = token.value.lower()
 
                 if token_lower not in self.identifier_vals and token_lower != 'e':
@@ -46,219 +133,41 @@ class Evaluate:
             return True
         
         else:
-            return False
-
-
-    def convert_to_num(self, entry):
-        try:
-            num = float(entry)
-            return int(num) if num.is_integer() else num
-        except ValueError:
-            raise Exception("ERROR: Invalid number format")
-
-
-    def is_single_op(self, element):
-        ops = ['sin', 'cos', 'tan', 'cot', 'arcsin', 'arccos',
-               'arctan', 'arccot', 'log', 'sqrt', 'sqr', 'exp', 'unary-']
-        return element in ops
-
-
-    def is_binary_op(self, element):
-        ops = ['+', '-', 'mod', 'div', '*', '/', '^']
-        return element in ops
-
-
+            return False    
+    
+    
+    def evaluate_expression(self):
+        operand_stack = []
+        
+        for element in self.postfix_expr:
+            if element.type == "ID" and element.value not in self._reserved_ids():
+                operand_stack.append(self.identifier_vals[element.value.lower()])
+            elif self.is_binary_op(element.value):
+                if len(operand_stack) < 2:
+                    raise Exception("Insufficient operands for binary operation.")
+                top_element = operand_stack.pop()
+                bottom_element = operand_stack.pop()
+                operand_stack.append(self._apply_binary_op(element.value, bottom_element, top_element))
+                
+            elif self.is_single_op(element.value):
+                if len(operand_stack) < 1:
+                    raise Exception("Insufficient operands for binary operation.")
+                top_element = operand_stack.pop()
+                operand_stack.append(self._apply_single_op(element.value, top_element))
+            
+            elif self.is_number(element.value):
+                operand_stack.append(self.convert_to_num(element.value))
+            
+            else:
+                raise Exception(f"Invalid element: {element.value}")
+        if len(operand_stack) != 1:
+            raise Exception("Invalid postfix expression. Stack contains:", operand_stack)
+        return operand_stack.pop()
+    
     def evaluate(self):
         self.get_values()
-        operand_stack = []
-
-        for element in self.postfix_expr:
-
-
-            if element.type == "ID" and element.value not in ['div', 'mod', 'sin', 'cos', 'tan', 'cot', 'arcsin', 'arccos', 'arctan', 'arccot', 'log', 'sqrt', 'sqr', 'exp']:
-                number = self.identifier_vals[f'{element.value.lower()}']
-                operand_stack.append(number)
-                
-            elif self.is_binary_op(element.value):
-                if len(operand_stack) < 2:
-                    raise Exception(
-                        f"len of the stack is less than required for a double-input operation: {operand_stack}")
-                top_element = operand_stack.pop()
-                bottom_element = operand_stack.pop()
-
-                if element.value == '+':
-                    operand_stack.append(bottom_element + top_element)
-
-                elif element.value == '-':
-                    operand_stack.append(bottom_element - top_element)
-
-                elif element.value == '*':
-                    operand_stack.append(bottom_element * top_element)
-
-                elif element.value == '/':
-                    operand_stack.append(bottom_element / top_element)
-
-                elif element.value == '^':
-                    operand_stack.append(bottom_element ** top_element)
-
-                elif element.value == 'mod':
-                    operand_stack.append(bottom_element % top_element)
-
-                elif element.value == 'div':
-                    operand_stack.append(bottom_element // top_element)
-
-            elif self.is_single_op(element.value):
-                if len(operand_stack) < 1:
-                    raise Exception(
-                        f"len of the stack is less than required for a single-input operation: {operand_stack}")
-                top_element = operand_stack.pop()
-
-                if element.value == 'unary-':
-                    operand_stack.append((-top_element))
-
-                elif element.value == 'sin':
-                    operand_stack.append(math.sin(top_element))
-
-                elif element.value == 'cos':
-                    operand_stack.append(math.cos(top_element))
-
-                elif element.value == 'tan':
-                    operand_stack.append(math.tan(top_element))
-
-                elif element.value == 'cot':
-                    operand_stack.append(1 / math.tan(top_element))
-
-                elif element.value == 'arcsin':
-                    operand_stack.append(math.asin(top_element))
-
-                elif element.value == 'arccos':
-                    operand_stack.append(math.acos(top_element))
-
-                elif element.value == 'arctan':
-                    operand_stack.append(math.atan(top_element))
-
-                elif element.value == 'arccot':
-                    operand_stack.append(1 / math.atan(top_element))
-
-                elif element.value == 'log':
-                    operand_stack.append(math.log(top_element))
-
-                elif element.value == 'sqrt':
-                    operand_stack.append(math.sqrt(top_element))
-
-                elif element.value == 'sqr':
-                    operand_stack.append(top_element ** 2)
-
-                elif element.value == 'exp':
-                    operand_stack.append(math.exp(top_element))
-                    
-            elif self.is_number(element.value):
-                number = self.convert_to_num(element.value)
-                operand_stack.append(number)
-                
-            else:
-                raise Exception(f"Invalid element: {element.value}")
-
-
-        if len(operand_stack) != 1:
-            raise Exception(
-                "The postfix expression is invalid. Remaining stack:", operand_stack)
-
-        return operand_stack.pop()
-
-
-    def evaluate_with_value(self,value):
+        return self.evaluate_expression()
+    
+    def evaluate_with_value(self, value):
         self.put_values(value)
-        operand_stack = []
-
-        for element in self.postfix_expr:
-
-            if element.type == "ID" and element.value not in ['div', 'mod', 'sin', 'cos', 'tan', 'cot', 'arcsin', 'arccos', 'arctan', 'arccot', 'log', 'sqrt', 'sqr', 'exp']:
-                number = self.identifier_vals[f'{element.value.lower()}']
-                operand_stack.append(number)
-                
-            elif self.is_binary_op(element.value):
-                if len(operand_stack) < 2:
-                    raise Exception(
-                        f"len of the stack is less than required for a double-input operation: {operand_stack}")
-                top_element = operand_stack.pop()
-                bottom_element = operand_stack.pop()
-
-                if element.value == '+':
-                    operand_stack.append(bottom_element + top_element)
-
-                elif element.value == '-':
-                    operand_stack.append(bottom_element - top_element)
-
-                elif element.value == '*':
-                    operand_stack.append(bottom_element * top_element)
-
-                elif element.value == '/':
-                    operand_stack.append(bottom_element / top_element)
-
-                elif element.value == '^':
-                    operand_stack.append(bottom_element ** top_element)
-
-                elif element.value == 'mod':
-                    operand_stack.append(bottom_element % top_element)
-
-                elif element.value == 'div':
-                    operand_stack.append(bottom_element // top_element)
-
-            elif self.is_single_op(element.value):
-                if len(operand_stack) < 1:
-                    raise Exception(
-                        f"len of the stack is less than required for a single-input operation: {operand_stack}")
-                top_element = operand_stack.pop()
-
-                if element.value == 'unary-':
-                    operand_stack.append((-top_element))
-
-                elif element.value == 'sin':
-                    operand_stack.append(math.sin(top_element))
-
-                elif element.value == 'cos':
-                    operand_stack.append(math.cos(top_element))
-
-                elif element.value == 'tan':
-                    operand_stack.append(math.tan(top_element))
-
-                elif element.value == 'cot':
-                    operand_stack.append(1 / math.tan(top_element))
-
-                elif element.value == 'arcsin':
-                    operand_stack.append(math.asin(top_element))
-
-                elif element.value == 'arccos':
-                    operand_stack.append(math.acos(top_element))
-
-                elif element.value == 'arctan':
-                    operand_stack.append(math.atan(top_element))
-
-                elif element.value == 'arccot':
-                    operand_stack.append(1 / math.atan(top_element))
-
-                elif element.value == 'log':
-                    operand_stack.append(math.log(top_element))
-
-                elif element.value == 'sqrt':
-                    operand_stack.append(math.sqrt(top_element))
-
-                elif element.value == 'sqr':
-                    operand_stack.append(top_element ** 2)
-
-                elif element.value == 'exp':
-                    operand_stack.append(math.exp(top_element))
-                    
-            elif self.is_number(element.value):
-                number = self.convert_to_num(element.value)
-                operand_stack.append(number)
-                
-            else:
-                raise Exception(f"Invalid element: {element.value}")
-
-        if len(operand_stack) != 1:
-            raise Exception(
-                "The postfix expression is invalid. Remaining stack:", operand_stack)
-
-        return operand_stack.pop()
+        return self.evaluate_expression()

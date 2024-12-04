@@ -88,6 +88,10 @@ class Parser:
                 token = self.lookahead
                 
                 self.match('mod')
+
+                if self.lookahead.type != "NUM" or '.' in self.lookahead.value:
+                    raise Exception(f"Syntax error at Line {self.lookahead.line}: 'mod' requires an integer operand")
+                
                 self.power()
                 self.postfix.append(token)
                 self.term_prime()
@@ -114,7 +118,6 @@ class Parser:
 
     def factor(self):
         if self.lookahead.value == '-':
-            # there is a problem 
             token = self.lookahead
             self.match('-')
             token.value = 'unary-'
