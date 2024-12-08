@@ -141,8 +141,8 @@ class Parser:
             self.expr()
             self.match(')')
             
-        elif self.lookahead.value.lower() in ['sin', 'cos', 'tan', 'cot', 'arcsin', 'arccos', 'arctan', 'arccot', 'log', 'sqrt', 'sqr', 'exp']:
-        # elif self.lookahead.value.lower() in self.symbol_table.table and self.symbol_table.table[self.lookahead.value.lower()]['type'] == :
+        # elif self.lookahead.value.lower() in ['sin', 'cos', 'tan', 'cot', 'arcsin', 'arccos', 'arctan', 'arccot', 'log', 'sqrt', 'sqr', 'exp']:
+        elif self.symbol_table.is_function(self.lookahead.value.lower()):
             token = self.lookahead
             
             math_func = self.lookahead.value

@@ -1,6 +1,5 @@
 import math
 
-
 class Evaluate:
 
     def __init__(self, postfix_expr):
@@ -111,7 +110,7 @@ class Evaluate:
                     value = 2.71
                     result = self.convert_to_num(value)
                     self.identifier_vals[token_lower] = result
-
+                    
 
     def put_values(self, value):
         for token in self.postfix_expr:

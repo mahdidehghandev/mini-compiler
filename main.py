@@ -86,7 +86,7 @@ def main(file_name):
     
     lexer = Lexer(symbol_table, text)
     tokens = lexer.tokenize()
-    print(tokens)
+    # print(tokens)
     parser = Parser(symbol_table, tokens)
     parser.parse()
 
@@ -126,4 +126,4 @@ def main(file_name):
 
 
 if __name__ == "__main__":
-    main('test.txt')
+    main('input1.txt')

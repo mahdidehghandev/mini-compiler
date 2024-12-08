@@ -18,7 +18,8 @@ class Lexer:
         self.line = 1
         self.beginning = 0
         self.forward = 0
-        self.operators = ['+', '-', '*', '/', 'div', 'mod', '^', '(', ')']
+        # ! delete
+        # self.operators = ['+', '-', '*', '/', 'div', 'mod', '^', '(', ')']
         self.tokens = []
         
 
@@ -41,7 +42,8 @@ class Lexer:
                 self.is_single_line_comment()
             elif char == '{':
                 self.is_multi_line_comment()
-            elif char in self.operators:
+            # elif char in self.operators:
+            elif self.symbol_table.is_operator(char):
                 self.is_operator()
             elif char.isdigit():  
                 self.is_number()
@@ -174,8 +176,6 @@ class Lexer:
             self.error()    
             
                 
- 
- 
     def is_identifier(self):
         state = 0
         while self.forward < len(self.text):
@@ -193,8 +193,10 @@ class Lexer:
                         state = 2
                 case 2:
                     lexeme = self.text[self.beginning:self.forward].lower()
-                    if lexeme not in self.symbol_table.table:
-                        self.symbol_table.table[lexeme] = {'type': 'IDENTIFIER', 'value': None}
+                    if not self.symbol_table.is_id_existence(lexeme):
+                        self.symbol_table.add_id(lexeme)
+                    # if self.symbol_table.is_function(lexeme):
+                    
                     if lexeme in  ['sin', 'cos', 'tan', 'cot', 'arcsin', 'arccos', 'arctan', 'arccot', 'log', 'sqrt', 'sqr', 'exp']:
                         self.create_token("FUNCTION")
                         self.beginning = self.forward
@@ -204,10 +206,17 @@ class Lexer:
                         self.beginning = self.forward
                         return
         if state == 1:
-            if self.text[self.beginning:self.forward].lower() in ['sin', 'cos', 'tan', 'cot', 'arcsin', 'arccos', 'arctan', 'arccot', 'log', 'sqrt', 'sqr', 'exp']:
-                self.create_token("FUNCTION")
-            else:
-                self.create_token("ID")
+                    lexeme = self.text[self.beginning:self.forward].lower()
+                    if not self.symbol_table.is_id_existence(lexeme):
+                        self.symbol_table.add_id(lexeme)
+                    if self.symbol_table.is_function(lexeme):
+                    # if lexeme in  ['sin', 'cos', 'tan', 'cot', 'arcsin', 'arccos', 'arctan', 'arccot', 'log', 'sqrt', 'sqr', 'exp']:
+                        self.create_token("FUNCTION")
+                        self.beginning = self.forward
+                    else:
+                        self.create_token("ID")
+                        self.beginning = self.forward
+                        
         else:
             self.error()
         
