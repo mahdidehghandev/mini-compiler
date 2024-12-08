@@ -47,6 +47,9 @@ class Evaluate:
         elif op == '^':
             return a ** b
         elif op == 'mod':
+            if isinstance(b, float): #! check if there is a float number after the mod 
+                raise Exception("Syntax error: 'mod' requires an integer operand")
+
             return a % b
         elif op == 'div':
             return a // b
@@ -97,7 +100,7 @@ class Evaluate:
         
     def get_values(self):
         for token in self.postfix_expr:
-            if token.type == "ID" and token.value not in self._reserved_ids():
+            if token.type == "ID" and token.value.lower() not in self._reserved_ids():
                 token_lower = token.value.lower()
 
                 if token_lower not in self.identifier_vals and token_lower != 'e':
@@ -140,20 +143,20 @@ class Evaluate:
         operand_stack = []
         
         for element in self.postfix_expr:
-            if element.type == "ID" and element.value not in self._reserved_ids():
+            if element.type == "ID" and element.value.lower() not in self._reserved_ids():
                 operand_stack.append(self.identifier_vals[element.value.lower()])
-            elif self.is_binary_op(element.value):
+            elif self.is_binary_op(element.value.lower()):
                 if len(operand_stack) < 2:
                     raise Exception("Insufficient operands for binary operation.")
                 top_element = operand_stack.pop()
                 bottom_element = operand_stack.pop()
-                operand_stack.append(self._apply_binary_op(element.value, bottom_element, top_element))
+                operand_stack.append(self._apply_binary_op(element.value.lower(), bottom_element, top_element))
                 
-            elif self.is_single_op(element.value):
+            elif self.is_single_op(element.value.lower()):
                 if len(operand_stack) < 1:
                     raise Exception("Insufficient operands for binary operation.")
                 top_element = operand_stack.pop()
-                operand_stack.append(self._apply_single_op(element.value, top_element))
+                operand_stack.append(self._apply_single_op(element.value.lower(), top_element))
             
             elif self.is_number(element.value):
                 operand_stack.append(self.convert_to_num(element.value))

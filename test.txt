@@ -1,1 +1,1 @@
-sin(x)+cos(x)
+sin(x) + cos(x) - tan(x) + log(x + 2) - e^(-x) + 1

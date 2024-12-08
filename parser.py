@@ -1,6 +1,7 @@
 class Parser:
     
-    def __init__(self, tokens):
+    def __init__(self, symbol_table, tokens):
+        self.symbol_table = symbol_table
         self.tokens = tokens
         self.lookahead = tokens[0] if tokens else None 
         self.position = 0
@@ -19,7 +20,7 @@ class Parser:
 
 
     def match(self, char):
-        if self.lookahead and self.lookahead.value == char:
+        if self.lookahead.value and self.lookahead.value.lower() == char.lower():
             self.get_next_token()
         else:
             if self.lookahead:
@@ -32,6 +33,7 @@ class Parser:
         
         
     def parse(self):
+
         self.expr()
         if self.lookahead.type == "EOF":
             print("PARSING SUCCESSFUL")
@@ -68,43 +70,50 @@ class Parser:
         
         
     def term_prime(self):
-        match self.lookahead.value:
-            case '/':
-                token = self.lookahead
-                self.match('/')
-                self.power()
-                self.postfix.append(token)
-                self.term_prime()
-                
-            case '*':
-                token = self.lookahead
-                
-                self.match('*')
-                self.power()
-                self.postfix.append(token)
-                self.term_prime()
-                
-            case 'mod':
-                token = self.lookahead
-                
-                self.match('mod')
 
-                if self.lookahead.type != "NUM" or '.' in self.lookahead.value:
-                    raise Exception(f"Syntax error at Line {self.lookahead.line}: 'mod' requires an integer operand")
-                
-                self.power()
-                self.postfix.append(token)
-                self.term_prime()
-                
-            case 'div':    
-                token = self.lookahead
-                  
-                self.match('div')
-                self.power()
-                self.postfix.append(token)
-                self.term_prime()
-            case _:
-                return
+        if self.lookahead.value:
+            match self.lookahead.value.lower():
+                case '/':
+                    token = self.lookahead
+                    self.match('/')
+                    self.power()
+                    self.postfix.append(token) 
+                    self.term_prime()
+                    
+                case '*':
+                    token = self.lookahead
+                    
+                    self.match('*')
+                    self.power()
+                    self.postfix.append(token)
+                    self.term_prime()
+                    
+                case 'mod':
+                    token = self.lookahead
+                    
+                    self.match('mod')
+
+                    if self.lookahead.type not in {"ID", "NUM"} or '.' in self.lookahead.value:
+
+                        raise Exception(f"Syntax error at Line {self.lookahead.line}: 'mod' requires an integer operand")
+
+                        
+                    
+                    self.power()
+                    self.postfix.append(token)
+                    self.term_prime()
+                    
+                case 'div':    
+                    token = self.lookahead
+                    
+                    self.match('div')
+                    self.power()
+                    self.postfix.append(token)
+                    self.term_prime()
+                case _:
+                    return
+        else:
+            return
           
                 
     def power(self):
@@ -133,6 +142,7 @@ class Parser:
             self.match(')')
             
         elif self.lookahead.value.lower() in ['sin', 'cos', 'tan', 'cot', 'arcsin', 'arccos', 'arctan', 'arccot', 'log', 'sqrt', 'sqr', 'exp']:
+        # elif self.lookahead.value.lower() in self.symbol_table.table and self.symbol_table.table[self.lookahead.value.lower()]['type'] == :
             token = self.lookahead
             
             math_func = self.lookahead.value
@@ -187,17 +197,7 @@ class Parser:
     
     
     def optional_exponent(self):
-        if self.lookahead.value == 'E':
-            self.match('E') 
-
-            if self.lookahead.value in ['+', '-']:  
-                sign = self.lookahead.value
-                self.match(sign)
-            else:
-                sign = ''  
-            
-            self.digits() 
-        elif self.lookahead.value == 'e':
+        if self.lookahead.value == 'e' or self.lookahead.value == 'E':
             self.match('e') 
 
             if self.lookahead.value in ['+', '-']:  

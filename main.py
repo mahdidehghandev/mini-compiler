@@ -4,6 +4,8 @@ from evaluate import Evaluate
 import matplotlib.pyplot as plt
 import numpy as np
 
+from symbol_table import SymbolTable
+
 
 def read_file(entry):
     try:
@@ -53,7 +55,7 @@ def find_root(start_of_the_interval, end_of_the_interval, accuracy, postfix_expr
 
 
 def visulaize(start_of_the_interval, end_of_the_interval, postfix_expr):
-    step = 0.2
+    step = 0.1
     points = []
 
     for i in np.arange(start_of_the_interval, end_of_the_interval, step):
@@ -80,16 +82,19 @@ def main(file_name):
     text = read_file(file_name)
     if not text:
         return
-
-    lexer = Lexer(text)
+    symbol_table = SymbolTable()
+    
+    lexer = Lexer(symbol_table, text)
     tokens = lexer.tokenize()
-    parser = Parser(tokens)
+    print(tokens)
+    parser = Parser(symbol_table, tokens)
     parser.parse()
 
     print("Parsed postfix expression:")
     for i in parser.postfix:
         print(i.value, end=" ")
     print("\n")
+
 
     while True:
         print("1- without visual")
@@ -121,4 +126,4 @@ def main(file_name):
 
 
 if __name__ == "__main__":
-    main('input1.txt')
+    main('test.txt')
