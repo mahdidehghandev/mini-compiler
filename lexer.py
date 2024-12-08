@@ -193,11 +193,11 @@ class Lexer:
                         state = 2
                 case 2:
                     lexeme = self.text[self.beginning:self.forward].lower()
-                    if not self.symbol_table.is_id_existence(lexeme):
+                    if self.symbol_table.is_not_reserved(lexeme) and not self.symbol_table.is_id_existence(lexeme):
                         self.symbol_table.add_id(lexeme)
-                    # if self.symbol_table.is_function(lexeme):
+                    if self.symbol_table.is_function(lexeme):
                     
-                    if lexeme in  ['sin', 'cos', 'tan', 'cot', 'arcsin', 'arccos', 'arctan', 'arccot', 'log', 'sqrt', 'sqr', 'exp']:
+                    # if lexeme in  ['sin', 'cos', 'tan', 'cot', 'arcsin', 'arccos', 'arctan', 'arccot', 'log', 'sqrt', 'sqr', 'exp']:
                         self.create_token("FUNCTION")
                         self.beginning = self.forward
                         return

@@ -41,11 +41,13 @@ class SymbolTable:
         return False
 
     def is_not_reserved(self, entry):
-        if entry in self.table and self.table[entry]["is_reserved"] == False:
+        if entry in self.table and not self.table[entry]["is_reserved"]:
             return True
         return False
 
     def is_id_existence(self, entry):
+        print("entry in self.table" ,entry in self.table)
+        print("self.table[entry]" ,self.table[entry]["type"] == "IDENTIFIER")
         if entry in self.table and self.table[entry]["type"] == "IDENTIFIER":
             return True
         return False

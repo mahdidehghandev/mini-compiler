@@ -86,7 +86,7 @@ def main(file_name):
     
     lexer = Lexer(symbol_table, text)
     tokens = lexer.tokenize()
-    # print(tokens)
+    print(tokens)
     parser = Parser(symbol_table, tokens)
     parser.parse()
 
