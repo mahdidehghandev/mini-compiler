@@ -18,12 +18,12 @@ def read_file(entry):
         print(f"An unexpected error occurred: {e}")
         return None
 
-def find_root(start_of_the_interval, end_of_the_interval, accuracy, postfix_expr):
+def find_root(start_of_the_interval, end_of_the_interval, accuracy, postfix_expr,symbol_table):
     max_iterations = 1000
 
-    evaluate = Evaluate(postfix_expr)
+    evaluate = Evaluate(postfix_expr,symbol_table)
     y1 = evaluate.evaluate_with_value(start_of_the_interval)
-    evaluate = Evaluate(postfix_expr)
+    evaluate = Evaluate(postfix_expr,symbol_table)
     y2 = evaluate.evaluate_with_value(end_of_the_interval)
 
     if y1 * y2 > 0:
@@ -32,7 +32,7 @@ def find_root(start_of_the_interval, end_of_the_interval, accuracy, postfix_expr
         iteration = 0
         while abs(end_of_the_interval - start_of_the_interval) > accuracy and iteration < max_iterations:
             mid_point = (start_of_the_interval + end_of_the_interval) / 2
-            evaluate = Evaluate(postfix_expr)
+            evaluate = Evaluate(postfix_expr,symbol_table)
             y_mid = evaluate.evaluate_with_value(mid_point)
 
             if abs(y_mid) < accuracy:
@@ -54,12 +54,12 @@ def find_root(start_of_the_interval, end_of_the_interval, accuracy, postfix_expr
             print(f"Root approximated at x = {(start_of_the_interval + end_of_the_interval) / 2}")
 
 
-def visulaize(start_of_the_interval, end_of_the_interval, postfix_expr):
+def visulaize(start_of_the_interval, end_of_the_interval, postfix_expr,symbol_table):
     step = 0.1
     points = []
 
     for i in np.arange(start_of_the_interval, end_of_the_interval, step):
-        evaluate = Evaluate(postfix_expr)
+        evaluate = Evaluate(postfix_expr,symbol_table)
         y = evaluate.evaluate_with_value(i)
         points.append((i, y))
 
@@ -104,7 +104,7 @@ def main(file_name):
         choice = input("--> ")
 
         if choice == "1":
-            evaluate = Evaluate(parser.postfix)
+            evaluate = Evaluate(parser.postfix,symbol_table)
             print(evaluate.evaluate())
 
         elif choice == "2":
@@ -126,4 +126,4 @@ def main(file_name):
 
 
 if __name__ == "__main__":
-    main('input1.txt')
+    main('test.txt')

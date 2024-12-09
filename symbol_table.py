@@ -54,3 +54,18 @@ class SymbolTable:
 
     def add_id(self, entry):
         self.table[entry] = {"type": "IDENTIFIER", "value": None}
+
+    def is_reserved(self,entry):
+        if entry in self.table and self.table[entry]["is_reserved"] == True:
+            return True
+        return False
+    
+    def is_binary_op(self,entry):
+        if entry in self.table and (self.table[entry]["args"] == 2 and self.table[entry]["type"] == "FUNCTION" ):
+            return True
+        return False
+    
+    def is_single_op(self,entry):
+        if entry in self.table and (self.table[entry]["args"] == 1 and self.table[entry]["type"] == "FUNCTION"):
+            return True
+        return False

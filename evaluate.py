@@ -2,14 +2,15 @@ import math
 
 class Evaluate:
 
-    def __init__(self, postfix_expr):
+    def __init__(self, postfix_expr,symbol_table):
         self.postfix_expr = postfix_expr
         self.identifier_vals = {}
+        self.symbol_table = symbol_table
 
-    @staticmethod
-    def _reserved_ids():
-        return ['div', 'mod', 'sin', 'cos', 'tan', 'cot', 'arcsin', 'arccos',
-                'arctan', 'arccot', 'log', 'sqrt', 'sqr', 'exp']
+    # @staticmethod
+    # def _reserved_ids():
+    #     return ['div', 'mod', 'sin', 'cos', 'tan', 'cot', 'arcsin', 'arccos',
+    #             'arctan', 'arccot', 'log', 'sqrt', 'sqr', 'exp']
     
 
     @staticmethod
@@ -20,16 +21,16 @@ class Evaluate:
         except ValueError:
             raise Exception("ERROR: Invalid number format")
 
-    @staticmethod
-    def is_single_op(element):
-        ops = ['sin', 'cos', 'tan', 'cot', 'arcsin', 'arccos',
-               'arctan', 'arccot', 'log', 'sqrt', 'sqr', 'exp', 'unary-']
-        return element in ops
+    # @staticmethod
+    # def is_single_op(element):
+    #     ops = ['sin', 'cos', 'tan', 'cot', 'arcsin', 'arccos',
+    #            'arctan', 'arccot', 'log', 'sqrt', 'sqr', 'exp', 'unary-']
+    #     return element in ops
 
-    @staticmethod
-    def is_binary_op(element):
-        ops = ['+', '-', 'mod', 'div', '*', '/', '^']
-        return element in ops
+    # @staticmethod
+    # def is_binary_op(element):
+    #     ops = ['+', '-', 'mod', 'div', '*', '/', '^']
+    #     return element in ops
 
 
     @staticmethod
@@ -99,7 +100,7 @@ class Evaluate:
         
     def get_values(self):
         for token in self.postfix_expr:
-            if token.type == "ID" and token.value.lower() not in self._reserved_ids():
+            if token.type == "ID" and not self.symbol_table.is_reserved(token.value.lower()):
                 token_lower = token.value.lower()
 
                 if token_lower not in self.identifier_vals and token_lower != 'e':
@@ -114,7 +115,7 @@ class Evaluate:
 
     def put_values(self, value):
         for token in self.postfix_expr:
-            if token.type == "ID" and token.value not in self._reserved_ids():
+            if token.type == "ID" and not self.symbol_table.is_reserved(token.value):#!why don't use token.value.lower()
                 token_lower = token.value.lower()
 
                 if token_lower not in self.identifier_vals and token_lower != 'e':
@@ -142,16 +143,16 @@ class Evaluate:
         operand_stack = []
         
         for element in self.postfix_expr:
-            if element.type == "ID" and element.value.lower() not in self._reserved_ids():
+            if element.type == "ID" and not self.symbol_table.is_reserved(element.value.lower()):
                 operand_stack.append(self.identifier_vals[element.value.lower()])
-            elif self.is_binary_op(element.value.lower()):
+            elif self.symbol_table.is_binary_op(element.value.lower()):
                 if len(operand_stack) < 2:
                     raise Exception("Insufficient operands for binary operation.")
                 top_element = operand_stack.pop()
                 bottom_element = operand_stack.pop()
                 operand_stack.append(self._apply_binary_op(element.value.lower(), bottom_element, top_element))
                 
-            elif self.is_single_op(element.value.lower()):
+            elif self.symbol_table.is_single_op(element.value.lower()):
                 if len(operand_stack) < 1:
                     raise Exception("Insufficient operands for binary operation.")
                 top_element = operand_stack.pop()
