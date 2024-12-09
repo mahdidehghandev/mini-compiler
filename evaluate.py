@@ -16,6 +16,8 @@ class Evaluate:
     @staticmethod
     def convert_to_num(entry):
         try:
+            if entry in  ["e","E"]:#! add another method
+                return 2.71
             num = float(entry)
             return int(num) if num.is_integer() else num
         except ValueError:
