@@ -1,36 +1,38 @@
 import math
 
-
 class Evaluate:
 
-    def __init__(self, postfix_expr):
+    def __init__(self, postfix_expr,symbol_table):
         self.postfix_expr = postfix_expr
         self.identifier_vals = {}
+        self.symbol_table = symbol_table
 
-    @staticmethod
-    def _reserved_ids():
-        return ['div', 'mod', 'sin', 'cos', 'tan', 'cot', 'arcsin', 'arccos',
-                'arctan', 'arccot', 'log', 'sqrt', 'sqr', 'exp']
+    # @staticmethod
+    # def _reserved_ids():
+    #     return ['div', 'mod', 'sin', 'cos', 'tan', 'cot', 'arcsin', 'arccos',
+    #             'arctan', 'arccot', 'log', 'sqrt', 'sqr', 'exp']
     
 
     @staticmethod
     def convert_to_num(entry):
         try:
+            if entry in  ["e","E"]:#! add another method
+                return 2.71
             num = float(entry)
             return int(num) if num.is_integer() else num
         except ValueError:
             raise Exception("ERROR: Invalid number format")
 
-    @staticmethod
-    def is_single_op(element):
-        ops = ['sin', 'cos', 'tan', 'cot', 'arcsin', 'arccos',
-               'arctan', 'arccot', 'log', 'sqrt', 'sqr', 'exp', 'unary-']
-        return element in ops
+    # @staticmethod
+    # def is_single_op(element):
+    #     ops = ['sin', 'cos', 'tan', 'cot', 'arcsin', 'arccos',
+    #            'arctan', 'arccot', 'log', 'sqrt', 'sqr', 'exp', 'unary-']
+    #     return element in ops
 
-    @staticmethod
-    def is_binary_op(element):
-        ops = ['+', '-', 'mod', 'div', '*', '/', '^']
-        return element in ops
+    # @staticmethod
+    # def is_binary_op(element):
+    #     ops = ['+', '-', 'mod', 'div', '*', '/', '^']
+    #     return element in ops
 
 
     @staticmethod
@@ -47,6 +49,9 @@ class Evaluate:
         elif op == '^':
             return a ** b
         elif op == 'mod':
+            if isinstance(b, float): #! check if there is a float number after the mod 
+                raise Exception("Syntax error: 'mod' requires an integer operand")
+
             return a % b
         elif op == 'div':
             return a // b
@@ -97,31 +102,32 @@ class Evaluate:
         
     def get_values(self):
         for token in self.postfix_expr:
-            if token.type == "ID" and token.value not in self._reserved_ids():
+            if token.type == "ID" and not self.symbol_table.is_reserved(token.value.lower()):
                 token_lower = token.value.lower()
 
-                if token_lower not in self.identifier_vals and token_lower != 'e':
+                if token_lower not in self.symbol_table.table and token_lower != 'e':
                     value = input(f"Enter the value for '{token.value}': ")
                     result = self.convert_to_num(value)
-                    self.identifier_vals[token_lower] = result
+                    self.symbol_table.table[token_lower] = {"type" : "IDENTIFIER" , "value" :result , "is_reserved" : None}
                 elif token_lower == 'e':
                     value = 2.71
                     result = self.convert_to_num(value)
-                    self.identifier_vals[token_lower] = result
-
+                    self.symbol_table.table[token_lower] = {"type" : "IDENTIFIER" , "value" :result, "is_reserved" : None}#! use another method
+                    
 
     def put_values(self, value):
         for token in self.postfix_expr:
-            if token.type == "ID" and token.value not in self._reserved_ids():
+            if token.type == "ID" and not self.symbol_table.is_reserved(token.value):#!why don't use token.value.lower()
                 token_lower = token.value.lower()
 
-                if token_lower not in self.identifier_vals and token_lower != 'e':
+                if token_lower not in self.symbol_table.table and token_lower != 'e':
+                    value = input(f"Enter the value for '{token.value}': ")
                     result = self.convert_to_num(value)
-                    self.identifier_vals[token_lower] = result
+                    self.symbol_table.table[token_lower] = {"type" : "IDENTIFIER" , "value" :result, "is_reserved" : None}
                 elif token_lower == 'e':
                     value = 2.71
                     result = self.convert_to_num(value)
-                    self.identifier_vals[token_lower] = result
+                    self.symbol_table.table[token_lower] = {"type" : "IDENTIFIER" , "value" :result, "is_reserved" : None}#! use another method
 
 
     def is_number(self, entry):
@@ -140,20 +146,20 @@ class Evaluate:
         operand_stack = []
         
         for element in self.postfix_expr:
-            if element.type == "ID" and element.value not in self._reserved_ids():
-                operand_stack.append(self.identifier_vals[element.value.lower()])
-            elif self.is_binary_op(element.value):
+            if element.type == "ID" and not self.symbol_table.is_reserved(element.value.lower()):
+                operand_stack.append(self.symbol_table.table[element.value.lower()]["value"])
+            elif self.symbol_table.is_binary_op(element.value.lower()):
                 if len(operand_stack) < 2:
                     raise Exception("Insufficient operands for binary operation.")
                 top_element = operand_stack.pop()
                 bottom_element = operand_stack.pop()
-                operand_stack.append(self._apply_binary_op(element.value, bottom_element, top_element))
+                operand_stack.append(self._apply_binary_op(element.value.lower(), bottom_element, top_element))
                 
-            elif self.is_single_op(element.value):
+            elif self.symbol_table.is_single_op(element.value.lower()):
                 if len(operand_stack) < 1:
                     raise Exception("Insufficient operands for binary operation.")
                 top_element = operand_stack.pop()
-                operand_stack.append(self._apply_single_op(element.value, top_element))
+                operand_stack.append(self._apply_single_op(element.value.lower(), top_element))
             
             elif self.is_number(element.value):
                 operand_stack.append(self.convert_to_num(element.value))

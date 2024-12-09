@@ -12,12 +12,14 @@ class Token:
 
 
 class Lexer:
-    def __init__(self, text):
+    def __init__(self, symbol_table,text):
+        self.symbol_table = symbol_table
         self.text = text
         self.line = 1
         self.beginning = 0
         self.forward = 0
-        self.operators = ['+', '-', '*', '/', 'div', 'mod', '^', '(', ')']
+        # ! delete
+        # self.operators = ['+', '-', '*', '/', 'div', 'mod', '^', '(', ')']
         self.tokens = []
         
 
@@ -40,7 +42,8 @@ class Lexer:
                 self.is_single_line_comment()
             elif char == '{':
                 self.is_multi_line_comment()
-            elif char in self.operators:
+            # elif char in self.operators:
+            elif self.symbol_table.is_operator(char):
                 self.is_operator()
             elif char.isdigit():  
                 self.is_number()
@@ -83,7 +86,7 @@ class Lexer:
             if self.text[self.forward] == '\n':  
                 self.line += 1
             self.forward += 1
-        self.beginning = self.forward
+        self.beginning = self.forward   
 
 
     def is_number(self):
@@ -176,35 +179,93 @@ class Lexer:
     def is_identifier(self):
         state = 0
         while self.forward < len(self.text):
-            char = self.text[self.forward]
+            char = self.text[self.forward].lower()
             match state:
                 case 0:
                     if char.isalpha() or char == '_':
                         state = 1
                         self.forward += 1
                 case 1:
-                    if char.isalpha() or char == '_' or char.isdigit():
+                    if char.isalnum() or char == '_':
                         state = 1
                         self.forward += 1
                     else:
                         state = 2
-                
                 case 2:
-                    self.create_token("ID")
-                    self.beginning = self.forward
-                    return
- 
+                    lexeme = self.text[self.beginning:self.forward].lower()
+                    if self.symbol_table.is_not_reserved(lexeme) and not self.symbol_table.is_id_existence(lexeme):
+                        self.symbol_table.add_id(lexeme)
+                    if self.symbol_table.is_function(lexeme):
+                    
+                    # if lexeme in  ['sin', 'cos', 'tan', 'cot', 'arcsin', 'arccos', 'arctan', 'arccot', 'log', 'sqrt', 'sqr', 'exp']:
+                        self.create_token("FUNCTION")
+                        self.beginning = self.forward
+                        return
+                    else:
+                        self.create_token("ID")
+                        self.beginning = self.forward
+                        return
+        if state == 1:
+                    lexeme = self.text[self.beginning:self.forward].lower()
+                    if not self.symbol_table.is_id_existence(lexeme):
+                        self.symbol_table.add_id(lexeme)
+                    if self.symbol_table.is_function(lexeme):
+                    # if lexeme in  ['sin', 'cos', 'tan', 'cot', 'arcsin', 'arccos', 'arctan', 'arccot', 'log', 'sqrt', 'sqr', 'exp']:
+                        self.create_token("FUNCTION")
+                        self.beginning = self.forward
+                    else:
+                        self.create_token("ID")
+                        self.beginning = self.forward
+                        
+        else:
+            self.error()
+        
+
  
     def is_operator(self):
-        for op in self.operators:
-            if self.text[self.forward:self.forward + len(op)] == op:
-                self.forward += len(op)
-                self.create_token("OPERATOR")
-                self.beginning = self.forward
-                return
+
+        for op in self.symbol_table.table:
+            if self.text[self.forward:self.forward + len(op)].lower() == op:
+                symbol_info = self.symbol_table.table[op]
+                if symbol_info['type'] == 'OPERATOR' or symbol_info['type'] == 'DELIMITER':
+                    self.forward += len(op)
+                    self.create_token(symbol_info['type']) 
+                    self.beginning = self.forward
+                    return
         self.error()
 
-            
-            
-            
-            
+
+# def is_identifier(self):
+    #     state = 0
+    #     while self.forward < len(self.text):
+    #         char = self.text[self.forward]
+    #         match state:
+    #             case 0:
+    #                 if char.isalpha() or char == '_':
+    #                     state = 1
+    #                     self.forward += 1
+    #             case 1:
+    #                 if char.isalpha() or char == '_' or char.isdigit():
+    #                     state = 1
+    #                     self.forward += 1
+    #                 else:
+    #                     state = 2
+                
+    #             case 2:
+    #                 self.create_token("ID")
+    #                 self.beginning = self.forward
+    #                 return
+    #     if state in {1}:  
+    #         self.create_token("ID")
+    #     else:
+    #         self.error()   
+    
+    
+    # def is_operator(self):
+    #     for op in self.operators:
+    #         if self.text[self.forward:self.forward + len(op)] == op:
+    #             self.forward += len(op)
+    #             self.create_token("OPERATOR")
+    #             self.beginning = self.forward
+    #             return
+    #     self.error()
