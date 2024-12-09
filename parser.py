@@ -96,8 +96,6 @@ class Parser:
                     if self.lookahead.type not in {"ID", "NUM"} or '.' in self.lookahead.value:
 
                         raise Exception(f"Syntax error at Line {self.lookahead.line}: 'mod' requires an integer operand")
-
-                        
                     
                     self.power()
                     self.postfix.append(token)
@@ -144,7 +142,6 @@ class Parser:
         # elif self.lookahead.value.lower() in ['sin', 'cos', 'tan', 'cot', 'arcsin', 'arccos', 'arctan', 'arccot', 'log', 'sqrt', 'sqr', 'exp']:
         elif self.symbol_table.is_function(self.lookahead.value.lower()):
             token = self.lookahead
-            
             math_func = self.lookahead.value
             self.match(math_func)
             self.match('(')

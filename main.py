@@ -18,11 +18,12 @@ def read_file(entry):
         print(f"An unexpected error occurred: {e}")
         return None
 
-def find_root(start_of_the_interval, end_of_the_interval, accuracy, postfix_expr,symbol_table):
+def find_root(start_of_the_interval, end_of_the_interval, accuracy, postfix_expr):
     max_iterations = 1000
-
+    symbol_table = SymbolTable()
     evaluate = Evaluate(postfix_expr,symbol_table)
     y1 = evaluate.evaluate_with_value(start_of_the_interval)
+    symbol_table = SymbolTable()
     evaluate = Evaluate(postfix_expr,symbol_table)
     y2 = evaluate.evaluate_with_value(end_of_the_interval)
 
@@ -32,6 +33,7 @@ def find_root(start_of_the_interval, end_of_the_interval, accuracy, postfix_expr
         iteration = 0
         while abs(end_of_the_interval - start_of_the_interval) > accuracy and iteration < max_iterations:
             mid_point = (start_of_the_interval + end_of_the_interval) / 2
+            symbol_table = SymbolTable()
             evaluate = Evaluate(postfix_expr,symbol_table)
             y_mid = evaluate.evaluate_with_value(mid_point)
 
@@ -54,11 +56,14 @@ def find_root(start_of_the_interval, end_of_the_interval, accuracy, postfix_expr
             print(f"Root approximated at x = {(start_of_the_interval + end_of_the_interval) / 2}")
 
 
-def visulaize(start_of_the_interval, end_of_the_interval, postfix_expr,symbol_table):
+def visulaize(start_of_the_interval, end_of_the_interval, postfix_expr):
+
     step = 0.1
     points = []
 
     for i in np.arange(start_of_the_interval, end_of_the_interval, step):
+        symbol_table = SymbolTable()
+        print(symbol_table.table)
         evaluate = Evaluate(postfix_expr,symbol_table)
         y = evaluate.evaluate_with_value(i)
         points.append((i, y))
@@ -86,7 +91,8 @@ def main(file_name):
     
     lexer = Lexer(symbol_table, text)
     tokens = lexer.tokenize()
-    print(tokens)
+    for token in tokens:
+        print(token)
     parser = Parser(symbol_table, tokens)
     parser.parse()
 

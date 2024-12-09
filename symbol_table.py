@@ -30,7 +30,7 @@ class SymbolTable:
         }
 
     def is_function(self, entry):
-        print(entry)
+
         if entry in self.table and self.table[entry]["type"] == "FUNCTION":
             return True
         return False
@@ -46,17 +46,15 @@ class SymbolTable:
         return False
 
     def is_id_existence(self, entry):
-        print("entry in self.table" ,entry in self.table)
-        print("self.table[entry]" ,self.table[entry]["type"] == "IDENTIFIER")
         if entry in self.table and self.table[entry]["type"] == "IDENTIFIER":
             return True
         return False
 
     def add_id(self, entry):
-        self.table[entry] = {"type": "IDENTIFIER", "value": None}
+        self.table[entry] = {"type": "IDENTIFIER", "value": None, "is_reserved": None}
 
     def is_reserved(self,entry):
-        if entry in self.table and self.table[entry]["is_reserved"] == True:
+        if entry in self.table and not self.table[entry]["is_reserved"]:
             return True
         return False
     
