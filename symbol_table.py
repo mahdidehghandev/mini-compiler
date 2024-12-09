@@ -61,11 +61,11 @@ class SymbolTable:
         return False
     
     def is_binary_op(self,entry):
-        if entry in self.table and (self.table[entry]["args"] == 2 and self.table[entry]["type"] == "FUNCTION" ):
+        if entry in self.table and (self.table[entry]["type"] in ["FUNCTION","OPERATOR"] and self.table[entry]["args"] == 2 ):
             return True
         return False
     
     def is_single_op(self,entry):
-        if entry in self.table and (self.table[entry]["args"] == 1 and self.table[entry]["type"] == "FUNCTION"):
+        if entry in self.table and (self.table[entry]["type"] in ["FUNCTION","OPERATOR"] and self.table[entry]["args"] == 1 ):
             return True
         return False

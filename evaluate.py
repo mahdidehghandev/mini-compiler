@@ -105,14 +105,14 @@ class Evaluate:
             if token.type == "ID" and not self.symbol_table.is_reserved(token.value.lower()):
                 token_lower = token.value.lower()
 
-                if token_lower not in self.identifier_vals and token_lower != 'e':
+                if token_lower not in self.symbol_table.table and token_lower != 'e':
                     value = input(f"Enter the value for '{token.value}': ")
                     result = self.convert_to_num(value)
-                    self.identifier_vals[token_lower] = result
+                    self.symbol_table.table[token_lower] = {"type" : "IDENTIFIER" , "value" :result , "is_reserved" : None}
                 elif token_lower == 'e':
                     value = 2.71
                     result = self.convert_to_num(value)
-                    self.identifier_vals[token_lower] = result
+                    self.symbol_table.table[token_lower] = {"type" : "IDENTIFIER" , "value" :result, "is_reserved" : None}#! use another method
                     
 
     def put_values(self, value):
@@ -120,13 +120,14 @@ class Evaluate:
             if token.type == "ID" and not self.symbol_table.is_reserved(token.value):#!why don't use token.value.lower()
                 token_lower = token.value.lower()
 
-                if token_lower not in self.identifier_vals and token_lower != 'e':
+                if token_lower not in self.symbol_table.table and token_lower != 'e':
+                    value = input(f"Enter the value for '{token.value}': ")
                     result = self.convert_to_num(value)
-                    self.identifier_vals[token_lower] = result
+                    self.symbol_table.table[token_lower] = {"type" : "IDENTIFIER" , "value" :result, "is_reserved" : None}
                 elif token_lower == 'e':
                     value = 2.71
                     result = self.convert_to_num(value)
-                    self.identifier_vals[token_lower] = result
+                    self.symbol_table.table[token_lower] = {"type" : "IDENTIFIER" , "value" :result, "is_reserved" : None}#! use another method
 
 
     def is_number(self, entry):
@@ -146,7 +147,7 @@ class Evaluate:
         
         for element in self.postfix_expr:
             if element.type == "ID" and not self.symbol_table.is_reserved(element.value.lower()):
-                operand_stack.append(self.identifier_vals[element.value.lower()])
+                operand_stack.append(self.symbol_table.table[element.value.lower()]["value"])
             elif self.symbol_table.is_binary_op(element.value.lower()):
                 if len(operand_stack) < 2:
                     raise Exception("Insufficient operands for binary operation.")
