@@ -63,7 +63,6 @@ def visulaize(start_of_the_interval, end_of_the_interval, postfix_expr):
 
     for i in np.arange(start_of_the_interval, end_of_the_interval, step):
         symbol_table = SymbolTable()
-        print(symbol_table.table)
         evaluate = Evaluate(postfix_expr,symbol_table)
         y = evaluate.evaluate_with_value(i)
         points.append((i, y))
@@ -91,8 +90,7 @@ def main(file_name):
     
     lexer = Lexer(symbol_table, text)
     tokens = lexer.tokenize()
-    for token in tokens:
-        print(token)
+
     parser = Parser(symbol_table, tokens)
     parser.parse()
 
@@ -103,9 +101,9 @@ def main(file_name):
 
 
     while True:
-        print("1- without visual")
-        print("2- with visual")
-        print("3- find root")
+        print("1- Without visual")
+        print("2- With visual")
+        print("3- Find root")
         print("4- Exit")
         choice = input("--> ")
 

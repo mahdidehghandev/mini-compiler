@@ -4,7 +4,6 @@ import math
 class Evaluate:
     def __init__(self, postfix_expr, symbol_table):
         self.postfix_expr = postfix_expr
-        self.identifier_vals = {}
         self.symbol_table = symbol_table
 
 
@@ -83,7 +82,6 @@ class Evaluate:
 
     def get_values(self):
         for token in self.postfix_expr:
-            print(token)
             if (token.type == "ID") and (
                 self.symbol_table.table[token.value.lower()]["type"] == "IDENTIFIER"
                 and self.symbol_table.table[token.value.lower()]["value"] is None
