@@ -62,7 +62,7 @@ A Python-based mini-compiler that performs lexical analysis, parsing, evaluation
    - You can change the directory in   `main.py`
    ```python
    if __name__ == "__main__":
-    main('Examples\\test.txt') # Change this section
+    main(os.path.join('Examples','test.txt')) # Change this section
 
    ```
 3. **Menu Options**:
