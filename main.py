@@ -136,4 +136,4 @@ def main(file_name):
 
 
 if __name__ == "__main__":
-    main('test.txt')
+    main('Examples\\test.txt')

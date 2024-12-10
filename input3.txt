@@ -1,6 +1,0 @@
-        -(- sin (x  * 4*arctan(1) /180) //term1
-+ log (exp(Y1))/log(e) {term2}+ sqrt(sqr(-xY_2__z_))//term3
-{
-    comment
-}
--2^2^3+X div 10-y1 mod    3.5+2.31+0.69+1.3E+2)
