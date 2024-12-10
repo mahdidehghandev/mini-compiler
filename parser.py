@@ -130,6 +130,12 @@ class Parser:
             token.value = 'unary-'
             self.factor()  
             self.postfix.append(token)
+        elif self.lookahead.value == '+':
+            token = self.lookahead
+            self.match('+')
+            token.value = 'unary+'
+            self.factor()  
+            self.postfix.append(token)
             
         elif self.lookahead.type == "NUM":
             self.number()
@@ -139,7 +145,6 @@ class Parser:
             self.expr()
             self.match(')')
             
-        # elif self.lookahead.value.lower() in ['sin', 'cos', 'tan', 'cot', 'arcsin', 'arccos', 'arctan', 'arccot', 'log', 'sqrt', 'sqr', 'exp']:
         elif self.symbol_table.is_function(self.lookahead.value.lower()):
             token = self.lookahead
             math_func = self.lookahead.value

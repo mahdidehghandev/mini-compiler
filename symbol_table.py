@@ -11,6 +11,7 @@ class SymbolTable:
             'mod': {'type': 'OPERATOR', 'args': 2, "is_reserved": True},
             '^': {'type': 'OPERATOR', 'args': 2, "is_reserved": None},
             'unary-': {'type': 'OPERATOR', 'args': 1, "is_reserved": None},
+            'unary+': {'type': 'OPERATOR', 'args': 1, "is_reserved": None},
             '(': {'type': 'DELIMITER', "is_reserved": None},
             ')': {'type': 'DELIMITER', "is_reserved": None},
             'e': {'type': 'IDENTIFIER', 'value': 2.71, "is_reserved": True},

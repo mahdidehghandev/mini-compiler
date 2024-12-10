@@ -44,6 +44,8 @@ class Evaluate:
     def _apply_single_op(op, a):
         if op == "unary-":
             return -a
+        elif op == "unary+":
+            return a
         elif op == "sin":
             return math.sin(a)
         elif op == "cos":

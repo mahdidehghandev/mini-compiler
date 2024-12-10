@@ -94,10 +94,7 @@ def main(file_name):
     parser = Parser(symbol_table, tokens)
     parser.parse()
 
-    print("Parsed postfix expression:")
-    for i in parser.postfix:
-        print(i.value, end=" ")
-    print("\n")
+
 
 
     while True:
@@ -108,6 +105,10 @@ def main(file_name):
         choice = input("--> ")
 
         if choice == "1":
+            print("Parsed postfix expression:")
+            for i in parser.postfix:
+                print(i.value, end=" ")
+            print("\n")
             evaluate = Evaluate(parser.postfix,symbol_table)
             print(evaluate.evaluate())
 
@@ -130,4 +131,4 @@ def main(file_name):
 
 
 if __name__ == "__main__":
-    main('input1.txt')
+    main('test.txt')
