@@ -55,7 +55,7 @@ def find_root(start_of_the_interval, end_of_the_interval, accuracy, postfix_expr
             print(f"Root approximated at x = {(start_of_the_interval + end_of_the_interval) / 2}")
 
 
-def visulaize(start_of_the_interval, end_of_the_interval, postfix_expr):
+def visualize(start_of_the_interval, end_of_the_interval, postfix_expr):
 
     step = 0.1
     points = []
@@ -68,15 +68,19 @@ def visulaize(start_of_the_interval, end_of_the_interval, postfix_expr):
 
     x, y = zip(*points)
     plt.figure(figsize=(10, 6))
-    plt.plot(x, y, marker='o', markersize=8, linestyle='-', linewidth=2, color='blue', label='Curve')
-    plt.scatter(0, 0, color='red', s=150, label='(0, 0)', zorder=5)
-    plt.axhline(0, color='gray', linewidth=3, linestyle='dashdot')
-    plt.axvline(0, color='gray', linewidth=3, linestyle='dashdot')
+    plt.scatter(0, 0, color='gray', s=150, label='(0, 0)', zorder=5)
+    plt.axhline(0, color='gray', linewidth=5, linestyle='solid')
+    plt.axvline(0, color='gray', linewidth=5, linestyle='solid')
     plt.xlabel('X', fontsize=14, weight='bold')
     plt.ylabel('Y', fontsize=14, weight='bold')
+    plt.plot(x, y, marker='o', markersize=8, linestyle='-', linewidth=2, color='blue', label='Curve')
     plt.title('Visualization of (x, y) Points', fontsize=16, weight='bold')
     plt.grid(True, linewidth=1.2)
     plt.legend(fontsize=12)
+    plt.grid(True, linewidth=1, linestyle='--', alpha=0.7, color='#d3d3d3')
+    plt.gca().set_facecolor('#ecf0f1')
+    plt.figtext(0.5, 0.01, "Created by Ehsan Shafiei and Mahdi Dehghan",
+                ha="center", fontsize=12, weight='bold', color='#27ae60')
     plt.show()
 
 
@@ -116,7 +120,7 @@ def main(file_name):
         elif choice == "2":
             start_of_the_interval = float(input("Enter start of the interval: "))
             end_of_the_interval = float(input("Enter end of the interval: "))
-            visulaize(start_of_the_interval, end_of_the_interval, parser.postfix)
+            visualize(start_of_the_interval, end_of_the_interval, parser.postfix)
             
         elif choice == "3":
             start_of_the_interval = float(input("Enter start of the interval: "))
@@ -132,4 +136,4 @@ def main(file_name):
 
 
 if __name__ == "__main__":
-    main('input1.txt')
+    main('test.txt')
