@@ -93,7 +93,7 @@ class Parser:
                     
                     self.match('mod')
 
-                    if self.lookahead.type not in {"ID", "NUM"} or '.' in self.lookahead.value:
+                    if self.lookahead.type not in {"ID", "NUM", "FUNCTION"} or '.' in self.lookahead.value:
 
                         raise Exception(f"Syntax error at Line {self.lookahead.line}: 'mod' requires an integer operand")
                     

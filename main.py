@@ -3,7 +3,6 @@ from parser import Parser
 from evaluate import Evaluate
 import matplotlib.pyplot as plt
 import numpy as np
-
 from symbol_table import SymbolTable
 
 
@@ -94,9 +93,6 @@ def main(file_name):
     parser = Parser(symbol_table, tokens)
     parser.parse()
 
-
-
-
     while True:
         print("1- Without visual")
         print("2- With visual")
@@ -107,7 +103,12 @@ def main(file_name):
         if choice == "1":
             print("Parsed postfix expression:")
             for i in parser.postfix:
-                print(i.value, end=" ")
+                if i.value == 'unary-':
+                    print('-')
+                elif i.value == 'unary+':
+                    print('+')
+                else:
+                    print(i.value, end=" ")
             print("\n")
             evaluate = Evaluate(parser.postfix,symbol_table)
             print(evaluate.evaluate())
@@ -131,4 +132,4 @@ def main(file_name):
 
 
 if __name__ == "__main__":
-    main('test.txt')
+    main('input1.txt')

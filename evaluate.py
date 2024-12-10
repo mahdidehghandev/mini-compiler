@@ -18,8 +18,8 @@ class Evaluate:
     
 
 
-    @staticmethod
-    def _apply_binary_op(op, a, b):
+
+    def _apply_binary_op(self, op, a, b):
         if op == "+":
             return a + b
         elif op == "-":
@@ -31,6 +31,7 @@ class Evaluate:
         elif op == "^":
             return a**b
         elif op == "mod":
+            b = self.convert_to_num(b)
             if isinstance(b, float):  #! check if there is a float number after the mod
                 raise Exception("Syntax error: 'mod' requires an integer operand")
 

@@ -1,5 +1,6 @@
+import math
 class SymbolTable:
-    #! variables , functions ,
+
     # * inside the lexical analyzer when it hits to a ID it creates an entry for it
     def __init__(self):
         self.table = {
@@ -15,6 +16,7 @@ class SymbolTable:
             '(': {'type': 'DELIMITER', "is_reserved": None},
             ')': {'type': 'DELIMITER', "is_reserved": None},
             'e': {'type': 'IDENTIFIER', 'value': 2.71, "is_reserved": True},
+            'pi': {'type': 'IDENTIFIER', 'value': math.pi, "is_reserved": True},
             'sin': {'type': 'FUNCTION', 'args': 1, "is_reserved": True},
             'cos': {'type': 'FUNCTION', 'args': 1, "is_reserved": True},
             'tan': {'type': 'FUNCTION', 'args': 1, "is_reserved": True},
