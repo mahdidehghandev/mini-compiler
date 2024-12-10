@@ -4,7 +4,7 @@ from evaluate import Evaluate
 import matplotlib.pyplot as plt
 import numpy as np
 from symbol_table import SymbolTable
-
+import os
 
 def read_file(entry):
     try:
@@ -136,4 +136,4 @@ def main(file_name):
 
 
 if __name__ == "__main__":
-    main('Examples\\test.txt')
+    main(os.path.join('Examples','test.txt'))
