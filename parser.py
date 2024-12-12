@@ -174,19 +174,10 @@ class Parser:
             digit = self.lookahead.value
             self.match(digit)
             self.postfix.append(token)
-            self.digits_prime()
+            self.digits()
         
 
-    def digits_prime(self):
-        if self.lookahead.type == "NUM":  
-            token = self.lookahead
-            
-            digit = self.lookahead.value
-            self.match(digit)
-            self.postfix.append(token) 
-            self.digits_prime() 
-        else:
-            return
+
         
         
     def optional_fraction(self):
